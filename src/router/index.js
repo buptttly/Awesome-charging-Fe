@@ -5,7 +5,7 @@ import store from "../store/index.js"
 const routes = [
   //登录
   {
-    path:"/login",
+    path:"/user/login",
     name:"login",
     component:()=>import("../views/pages/login.vue")
   },
@@ -41,11 +41,11 @@ router.beforeEach((to,form,next)=>{
   const uInfo = store.state.uInfo.userInfo  
   if(!uInfo.username){ 
     // 未登录,跳转到login 
-    if(to.path==="/login"){
+    if(to.path==="/user/login"){
       next()
       return
     }
-    next("/login")
+    next("/user/login")
   }
   else{next()}
 })
