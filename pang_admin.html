@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/qs/6.10.1/qs.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js" />
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.15.3/dist/locale/bootstrap-table-zh-CN.min.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- cdn引入ElementUI组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+    <style scoped>
+        body {
+            margin: auto;
+            padding: 0;
+        }
+        
+        #app {
+            width: 70%;
+            left: 20%;
+            right: 30%;
+            position: relative;
+        }
+        
+        .h2Title {
+            padding-top: 3rem;
+            font-size: 30px;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px;
+        }
+        
+        .h3Title {
+            padding-top: 3rem;
+            text-align: right;
+            padding-right: 20%;
+            font-size: 18px;
+            color: black;
+        }
+        
+        .Fbuttons {
+            background: bisque;
+            font-size: 15px;
+            margin: 12px;
+            cursor: pointer;
+            height: 40px;
+            border-radius: 6px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            width: auto;
+        }
+        
+        .Lbuttons {
+            background: bisque;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            margin: 6px;
+            cursor: pointer;
+            height: 30px;
+            border-radius: 6px;
+            width: auto;
+        }
+        
+        .Input {
+            position: relative;
+            display: inline-table;
+            width: auto;
+            height: 35px;
+            margin: 6px;
+            border-radius: 6px;
+        }
+        
+        .main {
+            background-color: bisque;
+            width: 30rem;
+        }
+        
+        .msg {
+            font-size: 30px;
+            white-space: pre-wrap;
+            /*这是重点。文本换行*/
+            margin: 20px auto;
+            text-align: left;
+        }
+        
+        .rules .ins {
+            font-size: 20px;
+            font-weight: bold;
+            display: block;
+            text-align: center;
+            margin-bottom: 5px;
+            width: 300px;
+            margin-top: 15px
+        }
+        
+        .Linput {
+            font-size: 9px;
+            padding-left: 10px;
+            display: inline-table;
+            width: 8rem;
+            height: auto;
+            margin: 4px;
+            border-radius: 4px;
+        }
+    </style>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <div class="h2Title">智能充电桩计费调度系统（管理员）</div>
+        <div class="h3Title" style="padding-left: 0%;">{{datetime}}&emsp;</div>
+        <div display="margin-bottom: 30px" type="flex" justify="center" text-align="center">
+            <el-button @click="intoLogin()" class="Fbuttons">登录/注册</el-button>
+			<el-button @click="getAllStations()" class="Fbuttons">查看所有充电桩状态</el-button>
+			<el-button @click="intoSingleInfo()" class="Fbuttons">单个充电桩设置</el-button>
+			<el-button @click="getReport()" class="Fbuttons">查看报表</el-button>
+			<el-button @click="getQueueInfo()" class="Fbuttons">查看总体排队情况</el-button>
+		</div>
+        <hr>
+
+        <el-form v-if="showLogin" style="padding-left: 10%;">
+			<span class="msg" style="display:block; padding-left: 30%; padding-bottom: 1rem;">用户登录</span>
+			<div class="chess" style="padding-left: -10%;" display="margin-top:20px" type="flex" justify="center" text-align="center">
+				<el-input v-model="username" placeholder="账号" class="Input"></el-input>
+				<el-input v-model="password" placeholder="密码" class="Input"></el-input>
+                <el-input v-model="key" placeholder="如注册，需输入key" class="Input"></el-input>
+			</div><br>
+			<div display="margin-top:20px" style="padding-left: 25%;">
+				<el-button @click="login()" class="Fbuttons">登录</el-button>
+				<el-button @click="register()" class="Fbuttons">注册</el-button>
+			</div>
+		</el-form>
+
+        <!--查看所有充电桩状态-->
+        <el-form v-if="showAllStations" lable-width="100px" style="padding-left: 15%;">
+            <span class="msg" style="display:block;  padding-left: 22%; padding-bottom: 1rem;">充电区域</span>
+            <el-table :data="AllStations" :header-cell-style="{'text-align':'center'}" 
+                        height="350" style="width:900px">
+                <el-table-column property="chargingPileId" label="充电桩" text-align="center" width="100"></el-table-column>
+                <el-table-column property="status" label="工作状态" text-align="center" width="100"></el-table-column>
+                <el-table-column property="cumulativeUsageTimes" label="充电次数" text-align="center" width="90"></el-table-column>
+                <el-table-column property="cumulativeChargingTime" label="充电总时长" text-align="center" width="100"></el-table-column>
+                <el-table-column property="cumulativeChargingAmount" label="充电总电量" text-align="center" width="100"></el-table-column>
+            </el-table>		
+            <br>
+        </el-form>
+
+        <!--查看某个充电桩信息-->
+        <!-- <el-form v-if="showInfo" lable-width="100px" style="padding-left: 20%;">
+            <span class="msg" style="display:block;  padding-left: 20%; padding-bottom: 1rem;">充电桩信息</span>
+            <el-table :data="Info" :header-cell-style="{'text-align':'center'}" 
+                        height="350" style="width:900px">
+                <el-table-column property="user_id" label="用户" text-align="center" width="100"></el-table-column>
+                <el-table-column property="total" label="电池总量" text-align="center" width="100"></el-table-column>
+                <el-table-column property="apply" label="请求电量" text-align="center" width="90"></el-table-column>
+                <el-table-column property="time" label="排队时长" text-align="center" width="100"></el-table-column>
+               
+            </el-table>		
+            <br>
+        </el-form> -->
+
+        <!--查看报表-->
+        <el-form v-if="showReport" lable-width="100px" style="padding-left: 0%;">
+            <span class="msg" style="display:block;  padding-left: 35%; padding-bottom: 10px;">数据报表</span>
+            <span calss="msg" style="display:block; padding-left: 40%; padding-bottom:10px; font-size: 16px">时间:{{datetime}}</span>
+            <el-table  :data="report" :header-cell-style="{'text-align':'center'}" 
+                        height="350" style="width:900px">
+                <el-table-column property="day" label="" text-align="center" width="100"></el-table-column>
+                <el-table-column property="week" label="" text-align="center" width="100"></el-table-column>
+                <!-- <el-table-column property="month" label="" text-align="center" width="100"></el-table-column> -->
+                <el-table-column property="chargingPileId" label="充电桩编号" text-align="center" width="100"></el-table-column>
+                <el-table-column property="cumulativeUsageTimes" label="累计次数" text-align="center" width="100"></el-table-column>
+                <el-table-column property="cumulativeChargingTime" label="累计时长" text-align="center" width="90"></el-table-column>
+                <el-table-column property="cumulativeChargingAmount" label="累计电量" text-align="center" width="100"></el-table-column>
+                <el-table-column property="cumulativeFee" label="累计费用" text-align="center" width="100"></el-table-column>
+            </el-table>		
+            <br>
+        </el-form>
+
+
+        <div v-if="showSingleInfo" type="flex" justify="center">
+            <el-input type="number" class="Input" v-model="cid" style="width:auto;" placeholder="选择充电桩号"></el-input>
+        </div>
+        <div v-if="showSingleInfo" display="margin-bottom:20px" justify="center"><br>
+            <el-button @click="openStation()" class="Lbuttons" style="padding-top: 9px; height: 32px;">开启充电桩</el-button>
+            <el-button @click="closeStation()" class="Lbuttons" style="padding-top: 9px; height: 32px;">关闭充电桩</el-button>
+            <el-button @click="unavailableStation()" class="Lbuttons" style="padding-top: 9px; height: 32px;">停用充电桩</el-button>
+            <el-button @click="getSingleInfo()" class="Lbuttons" style="padding-top: 9px; height: 32px;">查看充电桩信息</el-button>
+        </div>
+
+        <div v-if="showQueueInfo">
+            <br> &emsp;&emsp;
+            <!--查看队列总体情况-->
+            <el-form v-if="showQueueInfo" lable-width="100px" style="padding-left: 15%;">
+                <span class="msg" style="display:block;  padding-left: 25%; padding-bottom: 10px;">队列概况</span>
+                <span calss="msg" style="display:block; padding-left: 40%; padding-bottom:10px; font-size: 16px">时间:{{datetime}}</span>
+                <el-table :data="queueInfo" :header-cell-style="{'text-align':'center'}" 
+                            height="350" style="width:900px">
+                    <el-table-column property="chargingPileId" label="充电桩编号" text-align="center" width="100"></el-table-column>
+                    <el-table-column property="username" label="用户名" text-align="center" width="100"></el-table-column>
+                    <el-table-column property="requireAmount" label="请求电量" text-align="center" width="100"></el-table-column>
+                    <el-table-column property="batteryAmount" label="电池容量" text-align="center" width="100"></el-table-column>
+                    <el-table-column property="waitingTime" label="已等待时间" text-align="center" width="100"></el-table-column>
+        
+                </el-table>		
+                <br>
+            </el-form>
+            
+        </div>
+
+        <el-form v-if="showSingleDetail" model="detail" lable-width="100px" style="padding-left: 5%;">
+			<span class="msg" style="display:block;padding-left: 40%; padding-bottom: 1rem;">充电详单</span>
+			<!-- <span class="msg" style="display:block;padding-left: 13%; font-size: 18px; padding-bottom: 1rem;">
+				用户名：{{id}}&emsp;&emsp;总费用：{{totalFee}}</span> -->
+			
+			<el-table :data="singleDetail" :header-cell-style="{'text-align':'center'}" 
+						height="350" style="width:1500px; padding-left: 0%;">
+				<el-table-column property="userId" label="车辆编号" text-align="center" width="80"></el-table-column>
+				<el-table-column property="orderId" label="详单编号" text-align="center" width="80"></el-table-column>
+				<el-table-column property="createTime" label="详单时间" text-align="center" width="80"></el-table-column>
+				<el-table-column property="chargingPileId" label="充电桩" text-align="center" width="70"></el-table-column>
+				<el-table-column property="volume" label="充电量" text-align="center" width="70"></el-table-column>
+				<el-table-column property="chargingTime" label="充电时长" text-align="center" width="80"></el-table-column>
+				<el-table-column property="startTime" label="开始时间" text-align="center" width="80"></el-table-column>
+				<el-table-column property="endTime" label="结束时间" text-align="center" width="80"></el-table-column>
+				<el-table-column property="chargingFee" label="电费" text-align="center" width="60"></el-table-column>
+				<el-table-column property="serviceFee" label="服务费" text-align="center" width="70"></el-table-column>
+				<el-table-column property="totalFee" label="总费用" text-align="center" width="70"></el-table-column>
+				<!-- <el-table-column property="timeFee" label="当前时间" text-align="center" width="70"></el-table-column> -->
+			</el-table>	
+		</el-form>
+
+    </div>
+
+    <script type="text/javascript">
+        const app = new Vue({
+            el: "#app",
+            data() {
+                return {
+                    username: undefined, //用户名
+                    password: undefined, //密码
+					key: null,
+                    is_admin: undefined, //是否是管理员
+                    // id: undefined, 
+					code: undefined,//登录和注册的返回码 0代表成功，-1代表失败
+					token:'',//每次发送在请求头中添加token
+                    AllStations:[],
+                    Info:[],
+                    report:[],
+                    queueInfo:[],
+                    singleInfo:[],
+
+					showAllStations: false,
+                    showInfo: false,
+                    showReport: false,
+                    showLogin: true,
+                    showSingleInfo: false,
+                    showQueueInfo: false,
+                    showSingleDetail:false,
+
+                    timer:null,
+                    time:null,
+                    datetime:null,
+                    timestamp:null,
+
+                    // number: 5,
+                    cid: null,//充电桩编号
+                    setmode:null,//RUNNING,SHUTDOWN,UNAVALIABLE
+
+                }
+            },
+            mounted() {
+                this.timer = setInterval(this.getTime, 1000);
+            },
+            beforDestroy(){
+				clearInterval(this.timer);
+			},
+
+            methods: {
+
+                getTime(){
+                    axios
+                        .get('http://10.128.131.71:5000/xxhh/time')
+                        .then(res=>{
+							console.log(res.data)
+                            this.datetime = res.data.data.datetime;
+							// alert(this.datetime);
+                            this.timestamp = res.data.timestamp;
+                        })
+                },
+
+                login() { //登录
+                    ////////////////test post//////////////
+                    axios
+                        .post('http://10.128.131.71:5000//xxhh/login', {
+                            // data: {
+                                username: this.username,
+                                password: this.password,                         
+                        },
+                        {
+                                    headers:{ //头部参数
+									    // 'Content-Type': 'application/x-www-form-urlencoded',
+        							    // token:this.token
+								    }
+                                }
+                        )
+                        .then(res => {
+                            // alert("连上了！");
+                            console.log(res.data.code);
+                            if (res.data.code == -1) {
+                                alert("账号或密码错误！");
+                                this.checkState();
+                            } else if(res.data.code == 0){
+                                this.token = res.data.data.token;
+                                alert("登陆成功！token = " + this.token);
+                                showLogin=false;
+                                showAllStations=true;
+                                }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+
+
+                },
+
+                register() { //注册
+                    axios
+                        .post('http://10.128.131.71:5000//xxhh/register', 
+                                {
+                                    username: this.username,
+                                    password: this.password,
+                                    key: this.key,
+                                },
+                                {
+                                    headers:{ //头部参数
+									    // 'Content-Type': 'application/x-www-form-urlencoded',
+        							    // token:this.token
+								    }
+                                }
+                            )
+                        .then(res => {
+                            if(res){
+                                alert("....");
+                            }
+                            
+                            console.log(res.data.code);
+                            if (res.data.code == 0) {
+                                alert("注册成功");
+                            } else {
+                                alert("账号已存在");
+                                console.log(res.data);
+                            }
+                        });
+                },
+
+                //获取所有充电桩状态
+                getAllStations() {
+                    this.showAllStations = true;
+                    this.showInfo=false;
+                    this.showLogin=false;
+                    this.showReport=false;
+                    this.showSingleInfo=false;
+                    this.showQueueInfo=false;
+                    this.showAllStations = true;
+                    this.showReport = false;
+                    this.showInfo = false;  
+                    this.showSingelDetail = false;                 
+                    axios
+                        .get('http://10.128.131.71:5000/xxhh/admin/query-all-piles_stat',
+                            {
+                                headers:{ //头部参数
+                                    // token:this.token
+                                    'Content-Type': 'application/json',
+                                    'Authorization': 'Bearer ' +this.token,
+                                }
+                            }    
+                        )
+                        .then(res => {
+                            this.AllStations = res.data.data;
+                            this.$set(this.AllStations);
+                            console.log(res)
+                        })
+				},
+
+                getReport() { //查看报表
+
+                    this.showReport = true;
+                    this.showAllStations = false;
+                    this.showInfo = false;
+                    this.showAllStations = false;
+                    this.showInfo=false;
+                    this.showLogin=false;
+                    this.showReport=true;
+                    this.showSingleInfo=false;
+                    this.showSingleDetail = false;
+                    this.showQueueInfo=false;
+
+                    axios
+                    .get("http://10.128.131.71:5000/xxhh/admin/query-report",{
+                        headers:{ //头部参数
+							// 'Content-Type': 'application/json',
+                            'Authorization': "Bearer "+this.token
+						}
+                    })
+                    .then(res => {
+                        console.log(res.data.data);
+                        this.report = res.data.data;
+                        this.$set(this.report);
+                    });
+                },
+
+
+                //启动充电桩
+                openStation() {
+                    axios
+                        .put("http://10.128.131.71:5000/xxhh/admin/update-pile", {
+                                chargingPileId: this.cid,
+                                status: "RUNNING"
+                            },
+                            {
+                                headers:{ //头部参数
+                                    'Content-Type': 'application/json',
+                                    'Authorization': "Bearer {{this.token}}"
+							        
+						        }
+                            }
+                        )
+                        .then(res => {
+                            console.log(res);
+                        });
+                },
+
+                //关闭充电桩
+                closeStation() {
+                    axios
+                        .put("http://10.128.131.71:5000/xxhh/admin/update-pile", {
+                            chargingPileId: this.cid,
+                            status: "SHUTDOWN"
+                            },
+                            {
+                                headers:{ //头部参数
+                                    'Content-Type': 'application/json',
+                                    // 'Authorization': "Bearer {{this.token}}"
+                                }
+                            }
+                        )
+                        .then(res => {
+                            console.log(res);
+                        });
+                },
+
+                //停用充电桩
+                unavailableStation() {
+                    axios
+                        .put("http://10.128.131.71:5000/xxhh/admin/update-pile", {
+                            chargingPileId: this.cid,
+                            status: 'UNAVAILABLE'
+                            },
+                            {
+                                headers:{ //头部参数
+                                    'Content-Type': 'application/json',
+                                    // 'Authorization': "Bearer {{this.token}}"
+						        }
+                            }
+                        )
+                        .then(res => {
+                            console.log(res);
+                        });
+                },
+
+                //查看单个充电桩流水
+                getSingleInfo(){
+                    axios
+                        .post("http://10.128.131.71:5000/xxhh/report/allCharging", {
+                            pile_id: this.cid,                           
+                            },
+                            {
+                                headers:{ //头部参数
+                                    'Content-Type': 'application/json',
+                                    // 'Authorization': "Bearer {{this.token}}"
+						        }
+                            }
+                        )
+                        .then(res => {
+                            this.showSingleDetail = true;
+                            this.singleDetail = res.data.data;
+                            
+
+                            console.log(res.data.data);
+                            console.log(this.singleDetail);
+                        });
+                },
+
+                //获取队列总体信息
+                getQueueInfo(){
+                    this.showAllStations = false;
+                    this.showInfo=false;
+                    this.showLogin=false;
+                    this.showReport=false;
+                    this.showSingleInfo=false;
+                    this.showQueueInfo=true;
+                    this.showSingleDetail = false;
+                    axios
+                        .get("http://10.128.131.71:5000/xxhh/admin/query-queue")
+                        .then(res => {
+                            console.log(res.data.data);
+                            this.queueInfo = res.data.data;
+                            this.$set(this.queueInfo);
+                        });
+                },
+
+                //显示查看所有充电桩的页面
+                intoShowAllStations(){
+                    this.showAllStations = true;
+                    this.showInfo=false;
+                    this.showLogin=false;
+                    this.showReport=false;
+                    this.showSingleInfo=false;
+                    this.showQueueInfo=false;
+                    this.showSingleDetail = false;
+                    getAllStations();
+                },
+
+                //显示登录和注册界面
+                intoLogin(){
+                    this.showAllStations = false;
+                    this.showInfo=false;
+                    this.showLogin=true;
+                    this.showReport=false;
+                    this.showSingleInfo=false;
+                    this.showQueueInfo=false;
+                    this.showSingleDetail = false;
+                },
+
+                //查看单个充电桩信息
+                intoSingleInfo(){
+                    this.showAllStations = false;
+                    this.showInfo=false;
+                    this.showLogin=false;
+                    this.showReport=false;
+                    this.showSingleInfo=true;
+                    this.showQueueInfo=false;
+                    this.showSingleDetail = false;
+                },
+
+                //查看报表
+                intoShowReport(){
+                    this.showAllStations = false;
+                    this.showInfo=false;
+                    this.showLogin=false;
+                    this.showReport=true;
+                    this.showSingleInfo=false;
+                    this.showQueueInfo=false;
+                    this.showSingleDetail = false;
+                    getReport();
+                },
+
+                //查看总体排队情况
+                intoQueueInfo(){
+                    this.showAllStations = false;
+                    this.showInfo=false;
+                    this.showLogin=false;
+                    this.showReport=false;
+                    this.showSingleInfo=false;
+                    this.showQueueInfo=true;
+                    this.showSingleDetail = false;
+                    getQueueInfo();
+                },
+            },
+        });
+    </script>
+</body>
+
+</html>
