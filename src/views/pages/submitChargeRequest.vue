@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       car_id: localStorage.getItem('car_id'),
-      request_amount: '',
+      request_amount: `${0}`,
       request_mode: 'quick'
     }
   },
