@@ -1,7 +1,8 @@
 <template>
-    <div>
-        <h1>修改充电量</h1>
-        <form @submit.prevent="submit">
+    <!-- <h1>修改充电方式</h1> -->
+    <div class="container">
+
+        <!-- <form @submit.prevent="submit">
             <div>
                 <label for="car_id">车牌号</label>
                 <input type="text" id="car_id" v-model="car_id" />
@@ -16,7 +17,22 @@
             <div>
                 <button type="submit">提交请求</button>
             </div>
-        </form>
+        </form> -->
+
+        <a-form @submit.prevent="submit">
+            <a-form-item label="车牌号">
+                <a-input v-model:value="car_id" />
+            </a-form-item>
+            <a-form-item label="充电模式">
+                <a-select v-model:value="request_mode">
+                    <a-select-option value="quick">快充</a-select-option>
+                    <a-select-option value="slow">慢充</a-select-option>
+                </a-select>
+            </a-form-item>
+            <a-form-item>
+                <a-button type="primary" html-type="submit">提交请求</a-button>
+            </a-form-item>
+        </a-form>
     </div>
 </template>
 
@@ -26,14 +42,14 @@ import { message } from 'ant-design-vue'
 export default {
     data() {
         return {
-            car_id: '',
+            car_id: localStorage.getItem('car_id'),
             request_mode: 'quick'
         }
     },
     methods: {
         async submit() {
             try {
-                const response = await fetch('http://localhost:6480/user/chMode', {
+                const response = await fetch(process.env.VUE_APP_BACKEND_URL + '/user/chMode', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

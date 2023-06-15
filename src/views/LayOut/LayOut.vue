@@ -4,7 +4,7 @@
             <!-- 头部 -->
             <el-header class="common-header flex-float">
                 <div class="flex">
-                    <img class="logo" src="../../assets/logo.png" alt="">
+                    <img class="logo" src="http://img.070077.xyz/202306152017798.png" alt="">
                     <h1 class="title">用户系统</h1>
                 </div>
 
@@ -137,7 +137,7 @@ export default {
     name: "layout",
     methods: {
         goToWebsite() {
-            window.location.href = 'https://ys.mihoyo.com/';
+            window.location.href = 'https://sr.mihoyo.com/';
         }
     }
 }

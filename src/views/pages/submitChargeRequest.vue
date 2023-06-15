@@ -1,64 +1,40 @@
 <template>
   <div class="container">
-    <h1>提交充电请求</h1>
-    <a-descriptions bordered>
-      <a-descriptions-item label="车牌号">
-        <div>
-          <input type="text" id="car_id" v-model="car_id" />
-        </div>
-      </a-descriptions-item>
-      <a-descriptions-item label="充电量 (度)">
-        <input type="number" id="request_amount" v-model="request_amount" />
-      </a-descriptions-item>
-      <a-descriptions-item label="充电模式">
-        <select id="request_mode" v-model="request_mode">
-          <option value="quick">快充</option>
-          <option value="slow">慢充</option>
-        </select>
-      </a-descriptions-item>
-      <a-descriptions-item>
-        <button type="submit">提交请求</button>
-      </a-descriptions-item>
-    </a-descriptions>
-
-    <!-- <form @submit.prevent="submit">
-      <div>
-        <label for="car_id">车牌号</label>
-        <input type="text" id="car_id" v-model="car_id" />
-      </div>
-      <div>
-        <label for="request_amount">充电量 (度)</label>
-        <input type="number" id="request_amount" v-model="request_amount" />
-      </div>
-      <div>
-        <label for="request_mode">充电模式</label>
-        <select id="request_mode" v-model="request_mode">
-          <option value="quick">快充</option>
-          <option value="slow">慢充</option>
-        </select>
-      </div>
-      <div>
-        <button type="submit">提交请求</button>
-      </div>
-    </form> -->
+    <a-form @submit.prevent="submit">
+      <a-form-item label="车牌号">
+        <a-input v-model:value="car_id" />
+      </a-form-item>
+      <a-form-item label="充电量 (度)">
+        <a-input-number v-model:value="request_amount" />
+      </a-form-item>
+      <a-form-item label="充电模式">
+        <a-select v-model:value="request_mode">
+          <a-select-option value="quick">快充</a-select-option>
+          <a-select-option value="slow">慢充</a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item>
+        <a-button type="primary" html-type="submit">提交请求</a-button>
+      </a-form-item>
+    </a-form>
   </div>
 </template>
   
 <script>
-import { message, Descriptions } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 
 export default {
   data() {
     return {
-      car_id: '',
-      request_amount: 0,
+      car_id: localStorage.getItem('car_id'),
+      request_amount: '',
       request_mode: 'quick'
     }
   },
   methods: {
     async submit() {
       try {
-        const response = await fetch('http://localhost:6480/user/request', {
+        const response = await fetch(process.env.VUE_APP_BACKEND_URL + '/user/request', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -93,4 +69,3 @@ export default {
   height: 100vh;
 }
 </style>
-  

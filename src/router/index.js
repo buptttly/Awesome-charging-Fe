@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import LayOut from '../views/LayOut/LayOut'
 import store from "../store/index.js"
+import { notification } from 'ant-design-vue';
 
 const routes = [
   //登录
@@ -51,6 +52,12 @@ const routes = [
         name: 'stopCharging',
         component: () => import("../views/pages/stopCharging.vue")
       }
+      // ,
+      // {
+      //   path: '/checkBill',
+      //   name: 'stopCharging',
+      //   component: () => import("../views/pages/stopCharging.vue")
+      // }
     ]
   }
 ]
@@ -60,19 +67,45 @@ const router = createRouter({
   routes
 })
 //路由守卫
-router.beforeEach((to, form, next) => {
-  // 判断用户是否登录
-  console.log("store", store.state.uInfo)
-  const uInfo = store.state.uInfo.userInfo
-  if (!uInfo.username) {
-    // 未登录,跳转到login 
-    if (to.path === "/user/login") {
-      next()
-      return
-    }
-    next("/user/login")
+router.beforeEach((to, from, next) => {
+  if (to.path === '/user') {
+    const userName = localStorage.getItem('user_name');
+    const wsUrl = process.env.VUE_APP_WS_URL + `/ws/${userName}`;
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      console.log('WebSocket连接已打开');
+};
+
+    ws.onmessage = (event) => {
+      const message = event.data;
+      console.log('收到消息:', message);
+      // 显示通知
+      notification.open({
+        message: '新的WebSocket消息',
+        description: message,
+      });
+    };
+
+    ws.onerror = (error) => {
+      console.log('WebSocket错误:', error);
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket连接已关闭');
+    };
   }
-  else { next() }
-})
+
+  const uInfo = store.state.uInfo.userInfo;
+  if (!uInfo.username) {
+    if (to.path === '/user/login') {
+      next();
+      return;
+    }
+    next('/user/login');
+  } else {
+    next();
+  }
+});
 
 export default router
