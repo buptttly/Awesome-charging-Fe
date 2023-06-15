@@ -5,28 +5,53 @@ import store from "../store/index.js"
 const routes = [
   //登录
   {
-    path:"/user/login",
-    name:"login",
-    component:()=>import("../views/pages/login.vue")
+    path: "/user/login",
+    name: "login",
+    component: () => import("../views/pages/login.vue")
   },
   //各个pages
   {
-    path:"/",
-        name:"layout",
-        component:LayOut,
-        //子路由
-        children:[
-            {
-                path:'/index',
-                name:'index',
-                component:()=>import("../views/pages/rolesList.vue")
-            },
-            {
-                path:'/user',
-                name:'user',
-                component:()=>import("../views/pages/usersList.vue")
-            }
-        ]
+    path: "/",
+    name: "layout",
+    component: LayOut,
+    //子路由
+    children: [
+      {
+        path: '/index',
+        name: 'index',
+        component: () => import("../views/pages/rolesList.vue")
+      },
+      {
+        path: '/user',
+        name: 'user',
+        component: () => import("../views/pages/usersList.vue")
+      },
+      {
+        path: '/submitChargeRequest',
+        name: 'submitChargeRequest',
+        component: () => import("../views/pages/submitChargeRequest.vue")
+      },
+      {
+        path: '/modifyAmount',
+        name: 'modifyAmount',
+        component: () => import("../views/pages/modifyAmount.vue")
+      },
+      {
+        path: '/chMode',
+        name: 'chMode',
+        component: () => import("../views/pages/chMode.vue")
+      },
+      {
+        path: '/startCharging',
+        name: 'startCharging',
+        component: () => import("../views/pages/startCharging.vue")
+      },
+      {
+        path: '/stopCharging',
+        name: 'stopCharging',
+        component: () => import("../views/pages/stopCharging.vue")
+      }
+    ]
   }
 ]
 
@@ -35,19 +60,19 @@ const router = createRouter({
   routes
 })
 //路由守卫
-router.beforeEach((to,form,next)=>{
+router.beforeEach((to, form, next) => {
   // 判断用户是否登录
-  console.log("store",store.state.uInfo)
-  const uInfo = store.state.uInfo.userInfo  
-  if(!uInfo.username){ 
+  console.log("store", store.state.uInfo)
+  const uInfo = store.state.uInfo.userInfo
+  if (!uInfo.username) {
     // 未登录,跳转到login 
-    if(to.path==="/user/login"){
+    if (to.path === "/user/login") {
       next()
       return
     }
     next("/user/login")
   }
-  else{next()}
+  else { next() }
 })
 
 export default router
