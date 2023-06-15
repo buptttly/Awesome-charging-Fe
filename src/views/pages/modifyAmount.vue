@@ -36,7 +36,7 @@ export default {
     data() {
         return {
             car_id: localStorage.getItem('car_id'),
-            request_amount: 0
+            request_amount: `${0}`
         }
     },
     methods: {
