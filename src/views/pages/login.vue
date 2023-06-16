@@ -10,7 +10,7 @@
                         trigger: 'blur',
                     },
                 ]">
-                    <el-input v-model="loginData.username" />
+                    <el-input v-model="loginData.username" @keydown.enter="handleLogin"/>
                 </el-form-item>
 
                 <el-form-item prop="password" label="密码" :rules="[
@@ -20,7 +20,7 @@
                         trigger: 'blur',
                     },
                 ]">
-                    <el-input type="password" v-model="loginData.password" />
+                    <el-input type="password" v-model="loginData.password" @keydown.enter="handleLogin"/>
                 </el-form-item>
             </el-form>
             <!-- 登录按钮 -->
