@@ -51,11 +51,6 @@ const routes = [
         path: '/stopCharging',
         name: 'stopCharging',
         component: () => import("../views/pages/stopCharging.vue")
-      },
-      {
-        path: '/checkBill',
-        name: 'checkBill',
-        component: () => import("../views/pages/checkBill.vue")
       }
       // ,
       // {

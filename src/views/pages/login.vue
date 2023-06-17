@@ -60,7 +60,7 @@ export default {
 
             console.log(process.env.VUE_APP_BACKEND_URL)
 
-            axios.post(process.env.VUE_APP_BACKEND_URL + '/user/login', loginData)
+            axios.post(process.env.VUE_APP_BACKEND_URL + '/login', loginData)
                 .then(response => {
                     const responseData = response.data;
 

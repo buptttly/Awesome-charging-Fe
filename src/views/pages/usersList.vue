@@ -69,7 +69,7 @@ export default {
     // 执行 HTTP 请求，获取数据
     const fetchData = async () => {
       try {
-          const response = await axios.get(process.env.VUE_APP_BACKEND_URL + '/user/checkBill?car_id=' + localStorage.getItem('car_id'))
+          const response = await axios.get(process.env.VUE_APP_BACKEND_URL + '/checkBill?car_id=' + localStorage.getItem('car_id'))
           const { data } = response.data
           console.log(data)
           const formattedData = data.bills.map(bill => {

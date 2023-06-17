@@ -137,15 +137,30 @@ export default {
 
     const currentTime = ref('');
 
+    // async function getTimeNow() {
+    //   try {
+    //     const response = await axios.get(process.env.VUE_APP_BACKEND_URL + '/timeNow');
+    //     const timestamp = response.data.data.timestamp;
+    //     currentTime.value = timestamp;
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // }
+
     async function getTimeNow() {
-      try {
-        const response = await axios.get(process.env.VUE_APP_BACKEND_URL + '/timeNow');
-        const timestamp = response.data.data.timestamp;
-        currentTime.value = timestamp;
-      } catch (error) {
-        console.error(error);
-      }
+  try {   
+    if (process.env.VUE_APP_BACKEND_URL === 'https://smartcharge.byr.cool') {
+      currentTime.value = '2023-06-17 13:11:08'; // 任意一固定值
+    } else {
+      const response = await axios.get(process.env.VUE_APP_BACKEND_URL + '/timeNow');
+      const timestamp = response.data.data.timestamp;
+      currentTime.value = timestamp;
     }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 
     onMounted(() => {
       getTimeNow();
