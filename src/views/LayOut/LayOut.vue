@@ -153,7 +153,7 @@ export default {
       currentTime.value = '2023-06-17 13:11:08'; // 任意一固定值
     } else {
       const response = await axios.get(process.env.VUE_APP_BACKEND_URL + '/timeNow');
-      const timestamp = response.data.data.timestamp;
+      const timestamp = response.data.data.timestamp + 8*60*60*1000;
       currentTime.value = timestamp;
     }
   } catch (error) {
