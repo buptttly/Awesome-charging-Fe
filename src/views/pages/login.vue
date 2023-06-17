@@ -68,6 +68,7 @@ export default {
                         sessionStorage.setItem("car_id", responseData.data.car_id);
                         sessionStorage.setItem("user_name", responseData.data.username);
                         store.commit('setUserInfo', responseData.data);
+                        document.title = responseData.data.car_id;
                         router.push({ path: "/user" }); // 跳转到用户主界面
                     } else {
                         // 处理登录失败的情况

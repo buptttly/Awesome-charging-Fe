@@ -69,14 +69,21 @@ export default {
     // 执行 HTTP 请求，获取数据
     const fetchData = async () => {
       try {
-        const response = await axios.get(process.env.VUE_APP_BACKEND_URL + '/user/checkBill?car_id=tt6')
-        const { data } = response.data
-        const formattedData = data.bills
-        dataSource.push(...formattedData)
+          const response = await axios.get(process.env.VUE_APP_BACKEND_URL + '/user/checkBill?car_id=' + localStorage.getItem('car_id'))
+          const { data } = response.data
+          console.log(data)
+          const formattedData = data.bills.map(bill => {
+              bill.start_time = new Date(bill.start_time).toLocaleString()
+              bill.end_time = new Date(bill.end_time).toLocaleString()
+              return {
+                  ...bill
+              }
+          })
+          dataSource.push(...formattedData)
       } catch (error) {
-        console.error(error)
+          console.error(error)
       }
-    }
+  }
 
     // 在组件挂载后执行一次 HTTP 请求
     onMounted(fetchData)
