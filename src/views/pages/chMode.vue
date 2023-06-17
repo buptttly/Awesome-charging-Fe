@@ -42,7 +42,7 @@ import { message } from 'ant-design-vue'
 export default {
     data() {
         return {
-            car_id: localStorage.getItem('car_id'),
+            car_id: sessionStorage.getItem('car_id'),
             request_mode: 'quick'
         }
     },

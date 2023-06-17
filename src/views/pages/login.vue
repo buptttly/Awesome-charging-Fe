@@ -65,8 +65,8 @@ export default {
                     const responseData = response.data;
 
                     if (responseData.code === 0) {
-                        localStorage.setItem("car_id", responseData.data.car_id);
-                        localStorage.setItem("user_name", responseData.data.username);
+                        sessionStorage.setItem("car_id", responseData.data.car_id);
+                        sessionStorage.setItem("user_name", responseData.data.username);
                         store.commit('setUserInfo', responseData.data);
                         router.push({ path: "/user" }); // 跳转到用户主界面
                     } else {

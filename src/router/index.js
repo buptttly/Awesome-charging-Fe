@@ -69,7 +69,7 @@ const router = createRouter({
 //路由守卫
 router.beforeEach((to, from, next) => {
   if (to.path === '/user') {
-    const userName = localStorage.getItem('user_name');
+    const userName = sessionStorage.getItem('user_name');
     const wsUrl = process.env.VUE_APP_WS_URL + `/ws/${userName}`;
     const ws = new WebSocket(wsUrl);
 
