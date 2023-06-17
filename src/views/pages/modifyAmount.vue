@@ -42,7 +42,7 @@ export default {
     methods: {
         async submit() {
             try {
-                const response = await fetch(process.env.VUE_APP_BACKEND_URL + '/modifyAmount', {
+                const response = await fetch(process.env.VUE_APP_BACKEND_URL + '/user/modifyAmount', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

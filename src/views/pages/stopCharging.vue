@@ -33,7 +33,7 @@ export default {
     methods: {
         async submit() {
             try {
-                const response = await fetch(process.env.VUE_APP_BACKEND_URL + '/stopCharging', {
+                const response = await fetch(process.env.VUE_APP_BACKEND_URL + '/user/stopCharging', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
