@@ -34,7 +34,7 @@ export default {
   methods: {
     async submit() {
       try {
-        const response = await fetch(process.env.VUE_APP_BACKEND_URL + '/user/request', {
+        const response = await fetch(process.env.VUE_APP_BACKEND_URL + '/request', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  /* background-image: url(http://img.070077.xyz/202306151658575.jpg); */
+  background-image: url(http://img.070077.xyz/202306151718573.jpg);
   background-size: cover;
   background-position: center;
   background-color: rgba(255, 255, 255, 0.5);
